@@ -11,12 +11,28 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @sort = params[:sort]
-    @movies = Movie.all.order(@sort)
-    @all_ratings = Movie.ratings
     
-    params[:ratings].nil? ? t_params = @all_ratings : t_params = params[:ratings].keys
-    @movies = Movie.where(rating: t_params).order(@sort)
+    @all_ratings = Movie.ratings #y
+    @sort = params[:sort]|| session[:sort]#y
+    
+    #@movies = Movie.all.order(@sort) #y
+    
+    
+    session[:ratings] = session[:ratings]|| {'G' => '', 'PG' => '', 'PG-13' => '', 'R' => ''} #will be either the selected boxes from the session or all boxes 
+    @t_params = params[:ratings]|| session[:ratings]
+    #params[:ratings].nil? ? @t_params = @all_ratings : t_params = params[:ratings].keys #if it nil the return all or just return the selected key.
+    
+    session[:sort]= @sort #save current into session
+    session[:ratings]= @t_params
+    
+    @movies = Movie.where(rating: session[:ratings].keys).order(session[:sort])
+    
+    if (params[:sort].nil? and !(session[:sort].nil?)) or (params[:ratings].nil? and !(session[:ratings].nil?)) #sort by movie title on refresh
+    
+      flash.keep
+      redirect_to movies_path(sort: session[:sort], ratings: session[:ratings])
+    
+    end
   end
 
   def new
