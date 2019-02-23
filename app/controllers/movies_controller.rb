@@ -14,7 +14,9 @@ class MoviesController < ApplicationController
     @sort = params[:sort]
     @movies = Movie.all.order(@sort)
     @all_ratings = Movie.ratings
-    #@ratings_hash = Hash[*all_ratings.map {|v| [v,1]}.flatten] #https://apidock.com/ruby/Array/flatten
+    
+    params[:ratings].nil? ? t_params = @all_ratings : t_params = params[:ratings].keys
+    @movies = Movie.where(rating: t_params).order(@sort)
   end
 
   def new

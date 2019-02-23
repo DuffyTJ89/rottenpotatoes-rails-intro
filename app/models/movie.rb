@@ -5,6 +5,6 @@ class Movie < ActiveRecord::Base
     #end
     
     def self.ratings
-       Movie.select(:rating).distinct.inject([]){|a, m| a.push m.rating}    
+       Movie.select(:rating).distinct.inject([]){|a, m| a.push m.rating} #create an array from the ratings and pass it back
     end
 end
